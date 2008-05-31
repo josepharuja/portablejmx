@@ -1,0 +1,15 @@
+org.leedsment.studentresearch.jmx
+org.leedsment.studentresearch.jmx.assembler
+org.leedsment.studentresearch.jmx.assembler.tests
+org.leedsment.studentresearch.jmx.assembler.tests.mbeans
+org.leedsment.studentresearch.jmx.export
+org.leedsment.studentresearch.jmx.export.tests
+org.leedsment.studentresearch.jmx.mbeans
+org.leedsment.studentresearch.jmx.support
+org.leedsment.studentresearch.jmx.support.tests
+org.leedsment.studentresearch.jmx.valueobjects
+org.leedsment.studentresearch.jmx.web.impl
+org.leedsmet.studentresearch.beans
+org.leedsmet.studentresearch.core
+org.leedsmet.studentresearch.jmx
+org.leedsmet.studentresearch.util
