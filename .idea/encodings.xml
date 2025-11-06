@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ --username joseph.a.aruja/portablejmx/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dev-easy-cross-cutting-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dev-easy-cross-cutting-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dev-easy-cross-cutting-exporter-jmx/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dev-easy-cross-cutting-exporter-jmx/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dev-easy-cross-cutting-web-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dev-easy-cross-cutting-web-demo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portable-observe-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portable-observe-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portable-observe-exporter-jmx/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portable-observe-exporter-jmx/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portable-observe-web-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portable-observe-web-demo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portablejmx-core/--username joseph.a.aruja/portablejmx/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portablejmx-webapp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/portablejmx-webapp/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
