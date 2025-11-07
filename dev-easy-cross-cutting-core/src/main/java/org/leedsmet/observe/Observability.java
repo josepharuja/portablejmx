@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class Observability {
     private static final AtomicReference<MeterRegistry> REG = new AtomicReference<>(NoopMeterRegistry.INSTANCE);
     private static volatile FeatureGate featureGate = new ConfigBackedFeatureGate();
+    private static volatile boolean featureMBeanRegistered = false;
 
     private Observability() {}
 
@@ -43,10 +44,26 @@ public final class Observability {
         boolean enabled = featureGate.isEnabled(FeatureKeys.OBS_ENABLED, true);
         boolean metrics = enabled && featureGate.isEnabled(FeatureKeys.METRICS_ENABLED, true);
         if (metrics) enableMetrics(); else disableMetrics();
+        // Best-effort auto-registration of FeatureFlags JMX MBean when exporter-jmx is on the classpath.
+        // This avoids a hard dependency from core -> exporter-jmx by using reflection.
+        attemptRegisterFeatureFlagsMBean();
     }
 
     /** Allow plugging a different feature gate implementation. */
     public static void setFeatureGate(FeatureGate gate) {
         featureGate = Objects.requireNonNull(gate, "gate");
+    }
+
+    private static void attemptRegisterFeatureFlagsMBean() {
+        if (featureMBeanRegistered) return;
+        try {
+            Class<?> cls = Class.forName("org.deveasy.jmx.features.FeatureFlags");
+            cls.getMethod("registerMBean").invoke(null);
+            featureMBeanRegistered = true;
+        } catch (ClassNotFoundException e) {
+            // exporter-jmx not present; ignore
+        } catch (Throwable t) {
+            // Do not fail app startup due to MBean registration issues
+        }
     }
 }

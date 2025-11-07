@@ -94,3 +94,18 @@ health.register("db", () -> db.ping() ? UP : DOWN);
 #### Failure Modes
 - Exporters are optional; if one fails to bind (e.g., port busy), it degrades gracefully and logs.
 - Registry always available; disabled mode returns no‑op meters.
+
+
+#### JMX Feature Flags and Usage (update)
+- Feature flags are exposed via a dedicated MBean: `org.deveasy.obs:type=Features` (read/write for booleans).
+- The core `Observability.startWithFeatures()` attempts to auto‑register this MBean using reflection when the JMX exporter module is on the classpath. This keeps `core` free of a hard dependency on the exporter.
+- Current toggles:
+  - `isMetricsEnabled()` / `setMetricsEnabled(boolean)` — swaps the global registry between Default (atomic per‑instance metrics) and No‑Op safely.
+  - `isObsEnabled()` / `setObsEnabled(boolean)` — master gate; currently delegates to metrics state when turning off.
+  - `isTraceEnabled()` / `setTraceEnabled(boolean)` — reserved for future tracing implementation.
+- Security posture:
+  - Registration uses the in‑process Platform `MBeanServer`; the library does not enable remote JMX. If remote JMX is enabled by the JVM, secure it with authz/authn + TLS.
+  - ObjectName domain: `org.deveasy.obs`. Replace/ignore/fail registration behavior is supported by `JmxPlatform` utilities.
+- Operational guidance:
+  - Prefer static flags for defaults (system properties/env). Use the JMX FeatureFlags MBean for incident response flips without restart.
+  - All API calls remain safe while flipping features; registries are swapped atomically.

@@ -3,33 +3,35 @@
 Updated: 2025-11-06
 
 #### Summary
-- Repository reshaped to a multi-module Maven build (parent + 3 modules scaffolded):
-  - `portable-observe-core` (jar) — API/SDK (to be populated)
-  - `portable-observe-exporter-jmx` (jar) — JMX bridge (to migrate existing code)
-  - `portable-observe-web-demo` (war) — demo app (to move web resources)
-- Design and roadmap docs added to guide incremental implementation.
+- Repository reshaped to a multi-module Maven build (parent + 3 modules):
+  - `dev-easy-cross-cutting-core` (jar) — core API/SDK (MVP implemented)
+  - `dev-easy-cross-cutting-exporter-jmx` (jar) — JMX bridge (FeatureFlags MBean, JMX utils)
+  - `dev-easy-cross-cutting-web-demo` (war) — demo app (placeholder)
+- Design, roadmap, and README added to guide incremental implementation.
+- CI: GitHub Actions on JDK 17 runs `mvn -B -DskipTests=false verify`.
 
 #### Decisions
-- Path A: multi-module layout first, then implement API.
-- Java target remains 1.8 for now to keep legacy sources compiling; plan to upgrade to 11/17 later.
-- Keep existing JMX utilities and reuse them in `exporter-jmx`.
+- Path A: multi-module layout first, then implement API. ✓
+- Java target set to 17 for all modules. ✓
+- Keep JMX exposure in a separate exporter module and invoke via reflection from core to avoid hard dependency. ✓
+
+#### Completed
+- Remove redundant legacy directories: `--username joseph.a.aruja/`, `portablejmx-core/`, `portablejmx-webapp/`. ✓
+- Add root `README.md` with quickstart, modules, feature switches, security, and build notes. ✓
+- Core metrics MVP: `Observability`, `DefaultMeterRegistry` (LongAdder/DoubleAdder), `NoopMeterRegistry`, `ConfigBackedFeatureGate`. ✓
+- JMX utils: `org.deveasy.jmx.support.JmxPlatform` (Platform MBeanServer; safe register/unregister). ✓
+- Auto-register FeatureFlags MBean: `Observability.startWithFeatures()` best-effort registers `org.deveasy.obs:type=Features` via reflection when exporter-jmx is present. ✓
 
 #### In Progress
-- Phase 1: API stubs and no-op implementations (not yet committed).
-- Migration plan for existing sources into appropriate modules.
+- JMX FeatureFlags integration test to validate runtime toggling of metrics. *
+- JMX meter exposure (read-only): `RegistryMBean` (total meters, counts per type) and collection MBeans for Counters/Timers/Summaries. *
 
 #### Next Actions
-1) Create initial API interfaces in `portable-observe-core` (`Observability`, `ObsConfig`, `MeterRegistry`, `Counter`, `Timer`, `DistributionSummary`, `Tags`, `HealthRegistry`) and no-op impls.
-2) Migrate JMX registration/assembler utilities into `portable-observe-exporter-jmx`.
-3) Move web resources into `portable-observe-web-demo` (`src/main/webapp`).
-4) Build `mvn -q -DskipTests=false verify` and fix any compilation/package issues.
+1) Add integration test: ensure `FeatureFlags` MBean is registered and toggling swaps registries safely.
+2) Implement and register registry/meter MBeans under `org.deveasy.obs` (replace-on-existing).
+3) Update DESIGN.md with JMX mapping and security note; extend README with JMX verification steps.
+4) Package consistency: rename remaining `org.leedsmet.observe.*` to `org.deveasy.observe.*` across modules.
 
 #### Risks / Notes
-- log4j 1.x is still present via dependency management; will migrate to slf4j/logback during modernization.
-- Tests currently JUnit 3.x; migration to JUnit 5 is planned after API stubs are in place.
-
-
-#### Update (2025-11-06)
-- Build upgraded to Java 17 at the parent POM level; modules inherit source/target 17. ✓
-- Initial JMX modernization utility added: `org.deveasy.jmx.support.JmxPlatform` (uses Platform MBeanServer, safe register/unregister with replace/ignore/fail). ✓
-- Legacy directory `--username joseph.a.aruja` is no longer referenced by the build. Action item: remove the directory from VCS (safe to delete) to declutter the repo. *
+- Dependency management still lists legacy logging/junit; migration to slf4j/logback and JUnit 5 is planned.
+- Security: JMX is in-process only; remote JMX is not enabled by this library.
