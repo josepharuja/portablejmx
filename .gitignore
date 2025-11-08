@@ -1,0 +1,33 @@
+# Maven build output
+# Ignore all target directories in all modules
+**/target/
+/target/
+
+# Maven release/versions plugin files
+pom.xml.tag
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# IDEs and build tool metadata
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+*.ipr
+*.iws
+.nb-configuration.xml
+.vscode/
+
+# Gradle (if present in the future)
+.gradle/
+build/
+
+# Logs and temp files
+*.log
+hs_err_pid*
+*.swp
+.DS_Store
+out/
