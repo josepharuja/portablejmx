@@ -2,6 +2,9 @@ package org.leedsmet.observe.internal;
 
 import org.leedsmet.observe.meter.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * No-op implementation of MeterRegistry and meters. Safe to use when observability is disabled.
  */
@@ -10,6 +13,16 @@ public final class NoopMeterRegistry implements MeterRegistry {
 
     private NoopMeterRegistry() {}
 
+    // --- Query API (all zeros/empty) ---
+    @Override public int totalMeters() { return 0; }
+    @Override public int countersCount() { return 0; }
+    @Override public int timersCount() { return 0; }
+    @Override public int summariesCount() { return 0; }
+    @Override public Map<String, Double> countersSnapshot() { return Collections.emptyMap(); }
+    @Override public Map<String, long[]> timersSnapshot() { return Collections.emptyMap(); }
+    @Override public Map<String, double[]> summariesSnapshot() { return Collections.emptyMap(); }
+
+    // --- Factories return no-op meters ---
     @Override
     public Counter counter(String name) { return NoopCounter.INSTANCE; }
 
@@ -41,6 +54,8 @@ public final class NoopMeterRegistry implements MeterRegistry {
         private NoopTimer() {}
         public Sample start() { return NoopSample.INSTANCE; }
         public void record(long durationNanos) {}
+        public long count() { return 0L; }
+        public double totalTimeNanos() { return 0d; }
         private static final class NoopSample implements Sample {
             static final NoopSample INSTANCE = new NoopSample();
             public void stop() {}
@@ -51,5 +66,7 @@ public final class NoopMeterRegistry implements MeterRegistry {
         static final NoopDistributionSummary INSTANCE = new NoopDistributionSummary();
         private NoopDistributionSummary() {}
         public void record(double amount) {}
+        public long count() { return 0L; }
+        public double totalAmount() { return 0d; }
     }
 }

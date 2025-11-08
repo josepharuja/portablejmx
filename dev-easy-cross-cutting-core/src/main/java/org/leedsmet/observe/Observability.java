@@ -65,5 +65,14 @@ public final class Observability {
         } catch (Throwable t) {
             // Do not fail app startup due to MBean registration issues
         }
+        // Also attempt to register registry and meter collection MBeans if available
+        try {
+            Class<?> bridge = Class.forName("org.deveasy.jmx.metrics.JmxMetricsBridge");
+            bridge.getMethod("registerMBeans").invoke(null);
+        } catch (ClassNotFoundException e) {
+            // exporter-jmx metrics bridge not present; ignore
+        } catch (Throwable t) {
+            // ignore failures
+        }
     }
 }

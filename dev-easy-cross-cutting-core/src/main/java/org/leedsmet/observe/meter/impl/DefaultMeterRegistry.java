@@ -18,6 +18,92 @@ public final class DefaultMeterRegistry implements MeterRegistry {
     private final ConcurrentMap<Id, DistributionSummary> summaries = new ConcurrentHashMap<>();
 
     @Override
+    public int totalMeters() {
+        return counters.size() + timers.size() + summaries.size();
+    }
+
+    @Override
+    public int countersCount() { return counters.size(); }
+
+    @Override
+    public int timersCount() { return timers.size(); }
+
+    @Override
+    public int summariesCount() { return summaries.size(); }
+
+    @Override
+    public java.util.Map<String, Double> countersSnapshot() {
+        java.util.Map<String, Double> out = new java.util.LinkedHashMap<>();
+        for (java.util.Map.Entry<Id, Counter> e : counters.entrySet()) {
+            Counter c = e.getValue();
+            double val;
+            if (c instanceof SimpleCounter) {
+                val = ((SimpleCounter) c).get();
+            } else {
+                // Fallback if a different implementation is present
+                // Not available via API; skip
+                continue;
+            }
+            out.put(canonicalId(e.getKey()), val);
+        }
+        return out;
+    }
+
+    @Override
+    public java.util.Map<String, long[]> timersSnapshot() {
+        java.util.Map<String, long[]> out = new java.util.LinkedHashMap<>();
+        for (java.util.Map.Entry<Id, Timer> e : timers.entrySet()) {
+            Timer t = e.getValue();
+            long count;
+            long total;
+            if (t instanceof SimpleTimer) {
+                count = ((SimpleTimer) t).count.sum();
+                total = ((SimpleTimer) t).totalNanos.sum();
+            } else {
+                count = t.count();
+                total = (long) t.totalTimeNanos();
+            }
+            out.put(canonicalId(e.getKey()), new long[]{count, total});
+        }
+        return out;
+    }
+
+    @Override
+    public java.util.Map<String, double[]> summariesSnapshot() {
+        java.util.Map<String, double[]> out = new java.util.LinkedHashMap<>();
+        for (java.util.Map.Entry<Id, DistributionSummary> e : summaries.entrySet()) {
+            DistributionSummary s = e.getValue();
+            double total;
+            long count;
+            if (s instanceof SimpleDistributionSummary) {
+                total = ((SimpleDistributionSummary) s).total.sum();
+                count = ((SimpleDistributionSummary) s).count.sum();
+            } else {
+                total = s.totalAmount();
+                count = s.count();
+            }
+            out.put(canonicalId(e.getKey()), new double[]{count, total});
+        }
+        return out;
+    }
+
+    private static String canonicalId(Id id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id.name);
+        if (!id.tags.asMap().isEmpty()) {
+            sb.append('{');
+            boolean first = true;
+            for (java.util.Map.Entry<String, String> t : id.tags.asMap().entrySet()) {
+                if (!first) sb.append(',');
+                first = false;
+                sb.append(t.getKey()).append('=').append(t.getValue());
+            }
+            sb.append('}');
+        }
+        return sb.toString();
+    }
+
+    @Override
     public Counter counter(String name) { return counter(name, Tags.empty()); }
 
     @Override

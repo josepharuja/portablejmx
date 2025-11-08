@@ -33,6 +33,15 @@ public final class NoopMeterRegistry implements MeterRegistry {
 
     private NoopMeterRegistry() {}
 
+    @Override public int totalMeters() { return 0; }
+    @Override public int countersCount() { return 0; }
+    @Override public int timersCount() { return 0; }
+    @Override public int summariesCount() { return 0; }
+
+    @Override public java.util.Map<String, Double> countersSnapshot() { return java.util.Collections.emptyMap(); }
+    @Override public java.util.Map<String, long[]> timersSnapshot() { return java.util.Collections.emptyMap(); }
+    @Override public java.util.Map<String, double[]> summariesSnapshot() { return java.util.Collections.emptyMap(); }
+
     @Override public Counter counter(String name) { return NOOP_COUNTER; }
     @Override public Counter counter(String name, Tags tags) { return NOOP_COUNTER; }
 
